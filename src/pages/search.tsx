@@ -1,5 +1,5 @@
 export default function Search() {
     return (
-        <h1>search!</h1>
+        <h1>search testing!</h1>
     )
 }
