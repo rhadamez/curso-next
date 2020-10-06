@@ -1,5 +1,36 @@
-export default function Search() {
+import { GetStaticProps } from "next"
+
+interface IProduct {
+    id: string
+    title: string
+}
+
+interface Top10Props {
+    products: IProduct[]
+}
+
+export default function Search({ products }: Top10Props) {
     return (
-        <h1>search testing!</h1>
+        <div>
+            <h1>Static products!</h1>
+            <ul>
+                {products.map(product => (
+                    <li key={product.id}>{product.title}</li>
+                ))}
+            </ul>
+        </div>
     )
+}
+
+export const getStaticProps: GetStaticProps<Top10Props> = async (context) => {
+    const response = await fetch('http://localhost:3333/products')
+    const products = await response.json()
+
+    return {
+        props: {
+            products
+        },
+        revalidate: 10
+    }
+
 }

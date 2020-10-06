@@ -7,15 +7,26 @@
         {
             "id": "calcas",
             "title": "Calças"
+        },
+        {
+            "id": "meias",
+            "title": "Meias"
         }
     ],
     "products": [
         {
-            "id": 1,
+            "id": 5,
             "title": "Camiseta Front-end",
             "price": 79.9,
             "category_id": "camisetas",
             "slug": "camiseta-front-ends"
+        },
+        {
+            "id": 1,
+            "title": "Meias NodeJS",
+            "price": 15.90,
+            "category_id": "meias",
+            "slug": "meias-nodejs"
         },
         {
             "id": 2,

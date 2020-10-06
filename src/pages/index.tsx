@@ -15,11 +15,10 @@ export default function Home({ recommendedProducts }: HomeProps) {
   return (
     <div>
       <Title>Products</Title>
-
       <ul>
-        {recommendedProducts.map(recommendedProduct => {
-          (<li key={recommendedProduct.id}>
-            {recommendedProduct.title}
+        {recommendedProducts.map(product => {
+          return (<li key={product.id}>
+            {product.title}
           </li>)
         })}
       </ul>
