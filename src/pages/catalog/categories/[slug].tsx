@@ -69,7 +69,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 }
 
 export const getStaticProps: GetStaticProps<CategoryProps> = async (context) => {
-    const slug = context.params
+    const { slug } = context.params
 
     const category = await client().getByUID('category', String(slug), {})
 

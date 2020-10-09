@@ -1,75 +1,52 @@
 import { useState } from 'react'
 import { GetStaticProps, GetStaticPaths } from "next"
 import dynamic from 'next/dynamic'
+import { client } from '@/lib/prismic'
 import { useRouter } from 'next/router'
+import PrismicDom from 'prismic-dom'
+import Prismic from 'prismic-javascript'
+import { Document } from 'prismic-javascript/types/documents'
 
-interface IProduct {
-    id: string
-    title: string
+interface ProductProps {
+    product: Document
 }
 
-interface CategoryProps {
-    products: IProduct[]
-}
-
-const Modal = dynamic(
-    () => import('@/components/Modal'),
-    { loading: () => <p>Loading...</p>, ssr: false }
-)
-
-export default function Product({ products }: CategoryProps) {
+export default function Product({ product }: ProductProps) {
     const router = useRouter()
-    const [modalVisibility, setModalVisibility] = useState(false)
 
     if (router.isFallback) {
         return <p>Carregando...</p>
     }
 
-    function handleModal() {
-        setModalVisibility(!modalVisibility)
-    }
-
     return (
         <div>
-            <h1>Teste slug: {router.query.slug}</h1>
-            <ul>
-                {products.map(prod => (
-                    <li key={prod.id}>{prod.title}</li>
-                ))}
-            </ul>
+            <h1>{PrismicDom.RichText.asText(product.data.title)}</h1>
 
-            <button onClick={handleModal}>{modalVisibility ? 'Fechar' : 'Abrir'} modal</button>
-            {modalVisibility && <Modal />}
+            <div dangerouslySetInnerHTML={{ __html: PrismicDom.RichText.asHtml(product.data.description) }}></div>
+
+            <p>Price: R${product.data.price}</p>
+
+            <img src={product.data.thumbnail.url} width="600" alt="" />
         </div>
     )
 }
 
-export const getStaticProps: GetStaticProps<CategoryProps> = async (context) => {
-    const slug = context.params
-
-    const response = await fetch(`http://localhost:3333/products?category_id=${slug}`)
-    const products = await response.json()
-
+export const getStaticPaths: GetStaticPaths = async () => {
     return {
-        props: {
-            products
-        },
-        revalidate: 15
+        paths: [],
+        fallback: true
     }
 }
 
-export const getStaticPaths: GetStaticPaths = async () => {
-    const response = await fetch(`http://localhost:3333/categories`)
-    const categories = await response.json()
+export const getStaticProps: GetStaticProps<ProductProps> = async (context) => {
+    const { slug } = context.params
 
-    const paths = categories.map(cat => {
-        return {
-            params: { slug: cat.id }
-        }
-    })
+    const product = await client().getByUID('product', String(slug), {})
 
     return {
-        paths,
-        fallback: true
+        props: {
+            product
+        },
+        revalidate: 15
     }
 }
