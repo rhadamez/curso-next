@@ -1,3 +1,4 @@
+import SEO from '@/components/SEO'
 import { GetServerSideProps } from 'next'
 import { Title } from '../styles/pages/Home'
 
@@ -14,6 +15,9 @@ export default function Home({ recommendedProducts }: HomeProps) {
 
   return (
     <div>
+      <SEO title="DevCommerce, o seu e-commerce top"
+        image="caramba.png"
+        shouldExcludeTitleSuffix />
       <Title>Products</Title>
       <ul>
         {recommendedProducts.map(product => {
@@ -27,7 +31,7 @@ export default function Home({ recommendedProducts }: HomeProps) {
 }
 
 export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
-  const response = await fetch('http://localhost:3333/recommended')
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/recommended`)
   const recommendedProducts = await response.json()
 
   return {

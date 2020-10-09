@@ -13,7 +13,7 @@ interface CategoryProps {
 }
 
 const Modal = dynamic(
-    () => import('../../../components/Modal'),
+    () => import('@/components/Modal'),
     { loading: () => <p>Loading...</p>, ssr: false }
 )
 
