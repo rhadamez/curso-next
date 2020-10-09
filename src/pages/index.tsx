@@ -1,14 +1,14 @@
 import SEO from '@/components/SEO'
+import Link from 'next/link'
+import { client } from '@/lib/prismic'
 import { GetServerSideProps } from 'next'
 import { Title } from '../styles/pages/Home'
-
-interface IProduct {
-  id: string
-  title: string
-}
+import Prismic from 'prismic-javascript'
+import PrismicDom from 'prismic-dom'
+import { Document } from 'prismic-javascript/types/documents'
 
 interface HomeProps {
-  recommendedProducts: IProduct[]
+  recommendedProducts: Document[]
 }
 
 export default function Home({ recommendedProducts }: HomeProps) {
@@ -22,7 +22,11 @@ export default function Home({ recommendedProducts }: HomeProps) {
       <ul>
         {recommendedProducts.map(product => {
           return (<li key={product.id}>
-            {product.title}
+            <Link href={`/products/${product.uid}`}>
+              <a>
+                {PrismicDom.RichText.asText(product.data.title)}
+              </a>
+            </Link>
           </li>)
         })}
       </ul>
@@ -31,12 +35,13 @@ export default function Home({ recommendedProducts }: HomeProps) {
 }
 
 export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/recommended`)
-  const recommendedProducts = await response.json()
+  const recommendedProducts = await client().query([
+    Prismic.Predicates.at('document.type', 'product')
+  ])
 
   return {
     props: {
-      recommendedProducts
+      recommendedProducts: recommendedProducts.results
     }
   }
 }
